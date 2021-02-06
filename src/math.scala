@@ -179,7 +179,173 @@ def greek(str:String):Char = {
     case "\\alpha" => 'α'
     case "\\beta" => 'β'
     case "\\gamma" => 'γ'
+    case "\\delta" => 'δ'
+    case "\\epsilon" => 'ε'
+    case "\\zeta" => 'ζ'
+    case "\\eta" => 'η'
+    case "\\theta" => 'θ'
+    case "\\iota" => 'ι'
+    case "\\kappa" => 'κ'
+    case "\\lambda" => 'λ'
+    case "\\mu" => 'μ'
+    case "\\nu" => 'ν'
+    case "\\xi" => 'ξ'
+    case "\\omicron" => 'ο'
+    case "\\pi" => 'π'
+    case "\\rho" => 'ρ'
+    case "\\sigma" => 'σ'
+    case "\\tau" => 'τ'
+    case "\\upsilon" => 'υ'
+    case "\\phi" => 'φ'
+    case "\\chi" => 'χ'
+    case "\\psi" => 'ψ'
+    case "\\omega" => 'ω'
+    case "\\Alpha" => 'Α'
+    case "\\Beta" => 'Β'
+    case "\\Gamma" => 'Γ'
+    case "\\Delta" => 'Δ'
+    case "\\Epsilon" => 'Ε'
+    case "\\Zeta" => 'Ζ'
+    case "\\Eta" => 'Η'
+    case "\\Theta" => 'Θ'
+    case "\\Iota" => 'Ι'
+    case "\\Kappa" => 'Κ'
+    case "\\Lambda" => 'Λ'
+    case "\\Mu" => 'Μ'
+    case "\\Nu" => 'Ν'
+    case "\\Xi" => 'Ξ'
+    case "\\Omicron" => 'Ο'
+    case "\\Pi" => 'Π'
+    case "\\Rho" => 'Ρ'
+    case "\\Sigma" => 'Σ'
+    case "\\Tau" => 'Τ'
+    case "\\Upsilon" => 'Υ'
+    case "\\Phi" => 'Φ'
+    case "\\Chi" => 'Χ'
+    case "\\Psi" => 'Ψ'
+    case "\\Omega" => 'Ω'
     case _ => throw new Exception()
   }
 }
+
+def equal(a:String, b:String):Boolean = a == b
+
+// if gt(a, b) => true then, a > b
+def gt(a:String, b:String) : Boolean = {
+  if (a.isEmpty && b.isEmpty) false
+  else {
+    if (a.isEmpty) false
+    else if (b.isEmpty) true
+    else {
+      if (a.length > b.length) true
+      else if (a.length < b.length) false
+      else {
+        if (a.head > b.head) true
+        else if (a.head < b.head) false
+        else gt(a.tail, b.tail)
+      }
+    }
+  }
+}
+
+def add(a:String, b:String): String = {
+  def ____add(a:Char, b:Char): (Char, Char) = {
+    ( ((((a - '0') + (b - '0'))/10)+'0').toChar, ((((a - '0') + (b - '0'))%10)+'0').toChar )
+  }
+
+  def ___add(a:Char, b: Char, c: Char) : (Char, Char) = {
+    (____add( ____add(a, b)._1, ____add(____add(a, b)._2, c)._1)._2, ____add(____add(a , b)._2 , c)._2)
+  }
+
+  def __add(a:String, b: Char): String = {
+    if (a.reverse.isEmpty) {
+      if (b == '0') ""
+      else b.toString
+    }
+    else  __add(a.init, ____add(a.last, b)._1) + ____add(a.last, b)._2.toString
+  }
+
+  def _add(a: String, b:String, c:Char):String = {
+     if (a == "" && b == "") {
+       if (c == '0') ""
+       else c.toString
+     }
+     else if ( a == "") __add(b, c)
+     else if ( b == "") __add(a, c)
+     else _add(a.init, b.init, ___add(a.last, b.last, c)._1) + ___add( a.last, b.last, c)._2.toString
+  }
+
+_add(a, b, '0')
+}
+
+
+def mul(a: String, b:String): String = {
+  def __mul(a:Char, b:Char): (Char, Char) = {
+    ( ((((a - '0') * (b - '0'))/10)+'0').toChar, ((((a - '0') * (b - '0'))%10)+'0').toChar )
+  }
+
+  def _mul(a:String, b:Char) : String = {
+    if (a.isEmpty) ""
+    else {
+      if (__mul(a.last, b)._1 == '0') add( _mul(a.init, b) + "0",  __mul(a.last , b)._2.toString)
+      else add( _mul(a.init, b) + "0",  __mul(a.last, b)._1.toString + __mul(a.last , b)._2.toString)
+    }
+  }
+
+  if (b.isEmpty) ""
+  else add( mul(a, b.init) + "0", _mul(a, b.last) )
+}
+
+
+def sub(a:String, b:String):String = {
+  def ___sub(a:Char, b:Char): (Char, Char) = {
+    if ( a >= b ) ( '0' , (((a - '0') - (b - '0'))+'0').toChar)
+    else ( '1' , ((((a - '0') + 10) - (b - '0'))+'0').toChar)
+  }
+
+  def __sub(a:String, b:Char): String = {
+    if (a.isEmpty) {
+      if ( b != '0') throw new Error()
+      else ""
+    } else {
+      if (__sub(a.init, ___sub(a.last, b)._1) == "" ) {
+        if ( ___sub(a.last, b)._2 == '0' ) ""
+        else ___sub(a.last, b)._2.toString
+      }
+      else __sub(a.init, ___sub(a.last, b)._1) + ___sub(a.last, b)._2.toString  
+    }
+  }
+
+  def _sub(a:String, b:String): String = {
+    if (b.isEmpty) a
+    else if (a.isEmpty) throw new Error
+    else if (__sub(a, b.last).isEmpty) ""
+    else if ( (_sub( __sub(a, b.last).init , b.init) == "") && (__sub(a, b.last).last == '0') ) ""
+    else _sub( __sub(a, b.last).init , b.init) + __sub(a, b.last).last
+  }
+
+  if (equal(a, b)) "0"
+  else _sub(a, b)
+}
+
+def div(a:String, b:String): (String, String) = {
+  if ( gt(a, b) ){ // a > b
+    if ( gt( mul(b, "2"), a) ) ("1", sub(a, b))
+    else if ( gt( mul(b, "3"), a) ) ("2", sub(a, mul("2", b)))
+    else if ( gt( mul(b, "4"), a) ) ("3", sub(a, mul("3", b)))
+    else if ( gt( mul(b, "5"), a) ) ("4", sub(a, mul("4", b)))
+    else if ( gt( mul(b, "6"), a) ) ("5", sub(a, mul("5", b)))
+    else if ( gt( mul(b, "7"), a) ) ("6", sub(a, mul("6", b)))
+    else if ( gt( mul(b, "8"), a) ) ("7", sub(a, mul("7", b)))
+    else if ( gt( mul(b, "9"), a) ) ("8", sub(a, mul("8", b)))
+    else if ( gt( mul(b, "10"), a) ) ("9", sub(a, mul("9", b)))
+    else {
+      if ( div(a.init, b)._2 == "0") ( div(a.init, b)._1 + div(a.last.toString, b)._1 , div(a.last.toString, b)._2)
+      else ( div(a.init, b)._1 + div( div(a.init, b)._2 + a.last.toString, b)._1 , div(div(a.init, b)._2 + a.last.toString, b)._2)      
+    }
+  }
+  else if (equal(a, b)) ("1", "0")
+  else ( "0", a )
+}
+
 }
