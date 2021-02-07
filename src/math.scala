@@ -347,9 +347,11 @@ def div(a:String, b:String): (String, String) = {
     else {
       val res1:(String, String) = div(a.init, b)
       val res2:(String, String) = div(a.last.toString, b)
-      val res3:(String, String) = div( res1._2 + a.last.toString, b)
       if ( res1._2 == "0") ( res1._1 + res2._1 , res2._2)
-      else ( res1._1 + res3._1 , res3._2)      
+      else {
+        val res3:(String, String) = div( res1._2 + a.last.toString, b)
+        ( res1._1 + res3._1 , res3._2)
+      }
     }
   }
   else if (equal(a, b)) ("1", "0")
