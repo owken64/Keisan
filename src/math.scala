@@ -308,20 +308,24 @@ def sub(a:String, b:String):String = {
       if ( b != '0') throw new Error()
       else ""
     } else {
-      if (__sub(a.init, ___sub(a.last, b)._1) == "" ) {
+      val res:String = __sub(a.init, ___sub(a.last, b)._1)
+      if ( res == "" ) {
         if ( ___sub(a.last, b)._2 == '0' ) ""
         else ___sub(a.last, b)._2.toString
       }
-      else __sub(a.init, ___sub(a.last, b)._1) + ___sub(a.last, b)._2.toString  
+      else res + ___sub(a.last, b)._2.toString  
     }
   }
 
   def _sub(a:String, b:String): String = {
     if (b.isEmpty) a
     else if (a.isEmpty) throw new Error
-    else if (__sub(a, b.last).isEmpty) ""
-    else if ( (_sub( __sub(a, b.last).init , b.init) == "") && (__sub(a, b.last).last == '0') ) ""
-    else _sub( __sub(a, b.last).init , b.init) + __sub(a, b.last).last
+    else {
+      val res: String = __sub(a, b.last)
+      if (res.isEmpty) ""
+      else if ( (_sub( res.init , b.init) == "") && (res.last == '0') ) ""
+      else _sub( res.init , b.init) + res.last
+    }
   }
 
   if (equal(a, b)) "0"
@@ -329,7 +333,8 @@ def sub(a:String, b:String):String = {
 }
 
 def div(a:String, b:String): (String, String) = {
-  if ( gt(a, b) ){ // a > b
+  if ( b == "0") throw new Exception
+  else if ( gt(a, b) ){ // a > b
     if ( gt( mul(b, "2"), a) ) ("1", sub(a, b))
     else if ( gt( mul(b, "3"), a) ) ("2", sub(a, mul("2", b)))
     else if ( gt( mul(b, "4"), a) ) ("3", sub(a, mul("3", b)))
@@ -340,8 +345,11 @@ def div(a:String, b:String): (String, String) = {
     else if ( gt( mul(b, "9"), a) ) ("8", sub(a, mul("8", b)))
     else if ( gt( mul(b, "10"), a) ) ("9", sub(a, mul("9", b)))
     else {
-      if ( div(a.init, b)._2 == "0") ( div(a.init, b)._1 + div(a.last.toString, b)._1 , div(a.last.toString, b)._2)
-      else ( div(a.init, b)._1 + div( div(a.init, b)._2 + a.last.toString, b)._1 , div(div(a.init, b)._2 + a.last.toString, b)._2)      
+      val res1:(String, String) = div(a.init, b)
+      val res2:(String, String) = div(a.last.toString, b)
+      val res3:(String, String) = div( res1._2 + a.last.toString, b)
+      if ( res1._2 == "0") ( res1._1 + res2._1 , res2._2)
+      else ( res1._1 + res3._1 , res3._2)      
     }
   }
   else if (equal(a, b)) ("1", "0")
